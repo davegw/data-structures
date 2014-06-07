@@ -1,86 +1,53 @@
 var Graph = function(){
-  this.nodes = [];
+  this.nodes = {};
 };
 
 Graph.prototype.addNode = function(newNode, toNode){
+  // Create new node object and add to nodes collection.
   var node = {};
   node.value = newNode;
-  node.edges = [];
-  this.nodes.push(node);
+  node.edges = {};
+  this.nodes[newNode] = node;
 
-  if (this.nodes.length === 2) {
-    this.addEdge(this.nodes[0].value, this.nodes[1].value)
+  if (Object.keys(this.nodes).length === 2) {
+    var objKeys = Object.keys(this.nodes);
+    this.addEdge(objKeys[0], objKeys[1]);
   }
 
   if (toNode) {
-    this.addEdge(newNode, toNode)
+    this.addEdge(newNode, toNode);
   }
 };
 
 Graph.prototype.contains = function(node){
-  for (var i = 0; i < this.nodes.length; i++){
-    if (this.nodes[i].value === node) {
-      return true;
-    }
-  }
-  return false;
+  return this.nodes.hasOwnProperty(node);
 };
 
 Graph.prototype.removeNode = function(node){
-  for (var i = 0; i < this.nodes.length; i++){
-    if (this.nodes[i].value === node) {
-      this.nodes.splice(i, 1);
-    }
-  }
+  delete this.nodes[node];
 };
 
 Graph.prototype.getEdge = function(fromNode, toNode){
-  for (var i = 0; i < this.nodes.length; i++){
-    if (this.nodes[i].value === fromNode) {
-      for (var k = 0; k < this.nodes[i].edges.length; k++) {
-        if (this.nodes[i].edges[k] === toNode) {
-          return true;
-        }
-      }
-    }
-  }
-  return false;
+  return this.nodes.hasOwnProperty(fromNode) && this.nodes[fromNode].edges.hasOwnProperty(toNode);
 };
 
 Graph.prototype.addEdge = function(fromNode, toNode){
-  var findFrom;
-  var findTo;
-  for (var i = 0; i < this.nodes.length; i++){
-    if (this.nodes[i].value === fromNode) {
-      findFrom = this.nodes[i];
-    }
-    else if (this.nodes[i].value === toNode) {
-      findTo = this.nodes[i];
-    }
-  }
-  findFrom.edges.push(toNode);
-  findTo.edges.push(fromNode);
-  this.nodes;
+  this.nodes[fromNode].edges[toNode] = true;
+  this.nodes[toNode].edges[fromNode] = true;
 };
 
 Graph.prototype.removeEdge = function(fromNode, toNode){
-  var findFrom;
-  var findTo;
-  for (var i = 0; i < this.nodes.length; i++){
-    if (this.nodes[i].value === fromNode) {
-      findFrom = this.nodes[i];
-      checkPosition = i;
-    }
-    else if (this.nodes[i].value === toNode) {
-      findTo = this.nodes[i];
-    }
-  }
-  var a = findFrom.edges.indexOf(toNode);
-  findFrom.edges.splice(a, 1);
-  var b = findTo.edges.indexOf(fromNode);
-  findTo.edges.splice(b, 1);
+  var node1 = this.nodes[fromNode];
+  var node2 = this.nodes[toNode];
+
+  delete node1.edges[toNode];
+  delete node2.edges[fromNode];
+
+  Object.keys(node1.edges).length === 0 && delete this.nodes[fromNode];
+  Object.keys(node2.edges).length === 0 && delete this.nodes[toNode];
 };
 
 /*
  * Complexity: What is the time complexity of the above functions?
+ * Constant.
  */
