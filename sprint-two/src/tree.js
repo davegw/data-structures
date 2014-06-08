@@ -35,17 +35,7 @@ treeMethods.contains = function(target){
   return wasFound;
 };
 
-treeMethods.traverse = function(callback){
-  var traverseTree = function(tree) {
-    callback(tree.value);
-    _.each(tree.children, function(child) {
-      traverseTree(child);
-    });
-  };
-  traverseTree(this);
-};
-
-
 /*
  * Complexity: What is the time complexity of the above functions?
+ * O(n) - Linear.
  */
