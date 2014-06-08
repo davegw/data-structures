@@ -24,7 +24,7 @@ HashTable.prototype.insert = function(k, v){
   if (!found){
     bucket.push([k, v]);
     this._count++;
-    if (this._count >= 0.25 * this._limit) {
+    if (this._count >= 0.75 * this._limit) {
       this.resize(this._limit * 2)
     }
   }
@@ -53,13 +53,13 @@ HashTable.prototype.remove = function(k){
   if (bucket === undefined) {
     return null
   }
-  for (var j = 0; j < bucket.length; j--) {
+  for (var j = 0; j < bucket.length; j++) {
     var tuple = bucket[j];
     if (tuple[0] === k){
       bucket.splice(j, 1);
       this._count--;
-      if (this._count < 0.25 * this.limit) {
-        this.resize(this.limit/2);
+      if (this._count < (0.25 * this._limit)) {
+        this.resize(this._limit/2);
       }
       return tuple[1];
     }
@@ -69,7 +69,9 @@ HashTable.prototype.remove = function(k){
 HashTable.prototype.resize = function(size){
   // Store old storage hash.
   var oldStorage = this._storage
-
+  this._limit = size;
+  this._storage = makeLimitedArray(this._limit);
+  this._count = 0;
   var context = this;
 
   // Need to loop through
@@ -77,12 +79,12 @@ HashTable.prototype.resize = function(size){
     if (bucket === undefined) {
       return;
     }
-    for (var j = 0; j < bucket.lenght; j++) {
+    for (var j = 0; j < bucket.length; j++) {
       var tuple = bucket[j];
       // callback is the argument used in the helper function and is a free function invocation so it is a global reference.
       // Will work too:
-      // context.insert(tuple[0], tuple[1]);
-      insert.call(context, tuple[0], tuple[1]);
+      // context.insert.call(context, tuple[0], tuple[1]);
+      context.insert(tuple[0], tuple[1]);
     }
   }/*.bind(this)*/); // You can also use bind here if you want to use this.insert
     // this is being bound by resize as the containing function which is invoked by the call to resize 

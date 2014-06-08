@@ -41,16 +41,4 @@ describe('tree', function() {
     expect(tree.contains(8)).to.equal(true);
   });
 
-  it('should traverse every element of the tree', function(){
-    tree.addChild(5);
-    tree.addChild(6);
-    tree.children[0].addChild(7);
-    tree.children[0].addChild(8);
-    var traverseTree = [];
-    tree.traverse(function(num) {
-      traverseTree.push(num*10);
-    })
-    expect(traverseTree).to.equal([5,7,8,6]);
-  })
-
 });
